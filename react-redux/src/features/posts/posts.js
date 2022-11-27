@@ -2,7 +2,7 @@ import {useSelector} from 'react-redux';
 import { selectAllPost } from './postsSlice';
 import React from 'react'
 
-export const posts = () => {
+export const Posts = () => {
     const posts = useSelector(selectAllPost);
 
     const renderPosts = posts.map(post =>(
