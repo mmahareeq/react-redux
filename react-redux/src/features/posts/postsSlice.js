@@ -1,17 +1,18 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createSlice, nanoid, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from "axios";
 
-const initialState = [
-    {
-        id:'1',
-        title: 'Learning Redux Toolkit',
-        content: 'I have heared good things.'
-    },
-    {
-        id: '2',
-        title: 'Learning React Hooks!',
-        content: 'I have heared good things.'
-    }
-];
+const POSTS_URL = 'https://jsonplaceholder.typicode.com/posts';
+
+const  initialState = {
+    posts: [],
+    status: 'idel', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null
+}
+
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ()=>{
+    const response = await axios.get(POSTS_URL);
+    return response.data;
+})
 
 const postSlice = createSlice({
     name: 'posts',
@@ -19,19 +20,37 @@ const postSlice = createSlice({
     reducers: {
         postAdded: {
             reducer: (state, action)=>{
-                state.push(action.payload)
+                state.posts.push(action.payload)
             },
-            prepare: (title, content, userId) =>{
+            prepare: (title, body, userId) =>{
                 const id = nanoid();
                 return {payload: 
-                    {id ,title, content, userId}
+                    {id ,title, body, userId}
                 }
             },
         }
     },
+    extraReducers(builder){
+        builder
+          .addCase(fetchPosts.pending, (state, action) =>{
+            state.status ='loading'
+          })
+          .addCase(fetchPosts.fulfilled, (state, action)=>{
+            state.status = 'succeeded';
+            state.posts = state.posts.concat(action.payload);
+          })
+          .addCase(fetchPosts.rejected, (state, action)=> {
+            state.status = 'failed'
+            state.error = action.error.message
+          })
+    }
 });
 
-export const selectAllPost = (state) => state.posts;
+export const selectAllPost = (state) => state.posts.posts;
+export const getPostsStatus = (state) => state.posts.status;
+export const getPostsError = (state) => state.posts.error;
+
+console.log('reducer', postSlice);
 
 export const {postAdded } = postSlice.actions;
 

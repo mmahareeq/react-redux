@@ -5,23 +5,26 @@ import { postAdded } from './postsSlice'
 import React from 'react'
 
 
-const AddPostForm = () => {
+export const AddPostForm = () => {
     const dispatch = useDispatch();
-    const users = useSelector(selectAllUsers);
 
+    const users = useSelector(selectAllUsers);
+    console.log(users)
     const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [body, setContent] = useState('');
     const [userId, setUserId] = useState('');
 
-    const onTitleChanged = (e)=> setTitle(e.tartget.value);
-    const onContentChanged = (e) => setContent(e.tartget.value);
+    const onTitleChanged = e=>
+    {    console.log(e)
+        setTitle(e.target.value)};
+    const onContentChanged = (e) => setContent(e.target.value);
     const onAuthorChanged = (e) => setUserId(e.target.value);
 
-    const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
+    const canSave = Boolean(title) && Boolean(body) && Boolean(userId)
      
     const onSavePostClicked = () =>{
-        if( title && content){
-            dispatch(postAdded(title, content, userId));
+        if( title && body){
+            dispatch(postAdded(title, body, userId));
             
             setContent('');
             setTitle('');
@@ -29,7 +32,7 @@ const AddPostForm = () => {
 
     }
 
-    const usersOption = map.users( user =>(
+    const usersOptions = users.map( user =>(
         <option key={user.id} value={user.id}>
             {user.name}
         </option>
@@ -56,7 +59,7 @@ const AddPostForm = () => {
                 <textarea
                     id="postContent"
                     name="postContent"
-                    value={content}
+                    value={body}
                     onChange={onContentChanged}
                 />
                 <button
@@ -69,4 +72,3 @@ const AddPostForm = () => {
   )
 }
 
-export default AddPostForm

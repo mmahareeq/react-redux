@@ -1,5 +1,5 @@
-import { Posts } from './features/posts/posts';
-import AddPostForm from './features/posts/AddPostForm';
+import { Posts } from './features/posts/Posts';
+import {AddPostForm } from './features/posts/AddPostForm';
 import './App.css';
 
 function App() {
